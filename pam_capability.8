@@ -1,0 +1,82 @@
+.TH pam_capability  8 "March 2002" " " "Role-Based Access"
+.SH NAME
+
+.B pam_capability
+\- role-based authentication/access
+
+.SH SYNOPSIS
+.B session required /lib/security/pam_capability.so \fR<\fIoptions\fR>
+.PP
+
+.SH DESCRIPTION
+\fBpam_capability\fP provides Role-Based Access Control for Linux.  
+.PP
+In the Role-Based Access Control scheme, you set up a series of roles in 
+the \fBcapability.conf\fR(5) file.  A role is defined as a set of valid Linux 
+capabilities.  The current set of all valid Linux capabilities can be found in 
+the \fI/usr/include/linux/capability.h\fR kernel header file or by using the 
+\fB_cap_names[]\fR string array.
+.PP
+Roles can act as building blocks in that once you have defined a role, it
+can be used as one of the capabilities of a subsequent role.  In this way
+the newly defined  role inherits the capabilities of the previously defined
+role.  Examples of this feature are given on the \fBcapability.conf\fR(5)
+man page.
+.PP
+Once you have defined a role, it can be assigned to a user or a group in the 
+\fBcapability.conf\fR(5) file.  A user is a standard Linux user login
+name that corresponds to a valid user with a login on the current system.
+A group is a standard Linux group name that corresponds to a valid group
+defined on the current system. 
+.PP
+Files in \fI/etc/pam.d\fR that correspond to a service that a user can use
+to log into the system may be modified to include a \fBpam_capability\fR
+session line.  For example:  the \fI/etc/pam.d/login\fR file is a good 
+candidate as it covers logins via telnet.  If a user logs into the system 
+using a service that has not been modified, no special capability assignement 
+takes place.
+
+.SH OPTIONS
+.PP
+.TP 10
+.B conf=\fR<\fIconf_file\fR>
+Specify the location of the configuration file.  If this option is
+not specified then the default location will be
+\fI/etc/security/capability.conf\fR.
+.PP
+.TP 10
+.B debug
+Log debug information via syslog.  The debug information is logged in the
+syslog \fIauthpriv\fR class.  Generally, this log information is collected
+in the \fI/var/log/secure\fR file.
+
+.SH IMPLEMENTATION DETAILS
+.PP
+\fBpam_capability\fR requires that the running kernel be modified to inherit
+capabilities across the \fBexec()\fR system call.  Kernels that have
+been patched with the kernel patch shipped with this module can enable
+capability inheritance using the \fBCONFIG_INHERIT_CAPS_ACROSS_EXEC\fR 
+configuration option.
+.PP
+If the running kernel has not been modified to inherit capabilities across
+the \fBexec()\fR system call, calling \fBpam_capability\fR has no effect on the
+session.
+.PP
+You must also have \fBlibcap\fR installed on your system.  If your
+distribution separates binary and header packages you may need
+\fBlibcap-devel\fR to compile the \fBpam_capability\fR code.
+
+.SH SEE ALSO
+\fBcapget\fR(2), \fBcapset\fR(2), \fBcap_set_proc\fR(3), \fBcap_get_proc\fR(3),
+\fBcapgetp\fR(3), \fBcapsetp\fR(3), \fBcapability.conf\fR(5), 
+\fIftp://ftp.guardian.no/pub/free/linux/capabilities\fR.
+
+.SH COPYRIGHT 
+Copyright (C) 2002 Erik M. A Kline
+.br
+This source code is licensed under GNU GPL Version 2.
+
+.SH AUTHOR
+The pam_capability module was developed by Erik M. A. Kline
+<ekline@ekline.com>.  This man page was written by Joe Ansell
+<joe.ansell@ccur.com>.

@@ -1,0 +1,156 @@
+.TH capability.conf  5 "March 2002" " " "Role-Based Access"
+.SH NAME
+
+.B capability.conf
+\- define capability roles and assign them to users and groups
+
+.SH SYNOPSIS
+.B /etc/security/capability.conf
+.PP
+
+.SH DESCRIPTION
+The \fBcapability.conf\fP file provides information about the roles that
+can be defined and assigned to users and groups. The file has three types of
+entries: Roles, Users and Groups.
+.PP
+.SS
+Roles
+.PP
+A role is a defined set of valid Linux capabilities.  The current set of all 
+valid Linux capabilities can be found in the 
+\fI/usr/include/linux/capability.h\fR kernel header file or by using the 
+\fB_cap_names[]\fR string array.  This array is described in the
+\fBcap_from_text\fR(3) man page. Additionally, the following capability
+keywords are pre-defined for convenience:
+.PP
+.nf
+.ft CW
+	all           : all capabilities (except cap_setpcap)
+	cap_fs_mask   : all filesystem-related capabilities
+	none          : no capabilities whatsoever
+.fi
+.ft 1
+.PP
+As the name implies, it is expected that different roles will be defined,
+based on the duties that various system users and groups need to perform.
+.PP
+The format of a role entry in the \fBcapability.conf\fR file is:
+.PP
+.nf
+.ft CW
+	role   <rolename>   <capability_list>
+.fi
+.ft 1
+.PP
+Entries in the capability list can reference previously defined roles.  For 
+example, you can define a role called \fIbasic\fR in the file and then add 
+this role as one of your capabilities in the capability list of a 
+subsequent role.  Note that the capability list is a whitespace or comma
+-separated list of capabilities that will be turned on in the user's
+inheritable set.
+.PP
+.SS Users
+.PP
+A user is a standard Linux user login name that correpsonds to a valid user
+with a login on the current system.  User entries that do not correspond
+to valid users on the current system (verified by \fBgetpwnam\fR(3)) are
+ignored.
+.PP
+The format of a user entry in the \fBcapability.conf\fR file is:
+.PP
+.nf
+.ft CW
+	user   <username>   <rolename>
+.fi
+.ft 1
+.PP
+The special username '*' can be used to assign a default role for users
+that do not match any listed users or have membership in a listed group:
+.PP
+.nf
+.ft CW
+	user   *            <default_rolename>
+.fi
+.ft 1
+.PP
+.SS Groups
+.PP
+A group is a standard Linux group name that corresponds to a valid group
+defined on the current system.  Group entries that do not correspond to
+valid groups on the current system (verified by \fBgetgrnam\fR(3)) are
+ignored.
+.PP
+The format of a group entry in the \fBcapability.conf\fR file is:
+.PP
+.nf
+.ft CW
+	group   <groupname>   <rolename>
+.fi
+.ft 1
+
+.SH EXAMPLES
+.PP
+The following example sets up an administrative role that is roughly
+equivalent to root:
+.PP
+.ft CW
+.nf
+	role     admin          all
+.ft 1
+.fi
+.PP
+.PP
+The following example sets up a desktop user role that adds sys_boot and
+sys_time to the inheritable capability set:
+.PP
+.ft CW
+.nf
+	role     desktopuser    cap_sys_boot \\
+	                        cap_sys_time
+.ft 1
+.fi
+.PP
+The following example sets up a poweruser user role, using the desktopuser
+role created previously:
+.PP
+.ft CW
+.nf
+	role     poweruser      desktopuser    \\
+	                        cap_sys_ptrace \\
+	                        cap_sys_nice   \\
+	                        cap_net_admin
+.ft 1
+.fi
+.PP
+To assign the desktopuser role to a user, enter the following in the USERS 
+section of the \fBcapability.conf\fR file:
+.PP
+.ft CW
+.nf
+	user     joe           desktopuser
+.ft 1
+.fi
+.PP
+To assign the poweruser role to a group, enter the following in the GROUPS 
+section of the \fBcapability.conf\fR file:
+.PP
+.ft CW
+.nf
+	group     hackers      poweruser
+.ft 1
+.fi
+
+.SH SEE ALSO
+\fBcapget\fR(2), \fBcapset\fR(2), \fBcap_set_proc\fR(3), \fBcap_get_proc\fR(3),
+\fBcapgetp\fR(3), \fBcapsetp\fR(3), \fBpam_capability\fR(8), 
+\fIftp://ftp.guardian.no/pub/free/linux/capabilities\fR.
+
+.SH COPYRIGHT 
+Copyright (C) 2002 Erik M. A. Kline
+.br
+The pam_capability module source code is licensed under the GNU GPL Version 2.
+
+.SH AUTHOR
+The pam_capability module was developed by Erik M. A. Kline
+<ekline@ekline.com>.  This man page was written by Joe Ansell
+<joe.ansell@ccur.com>.

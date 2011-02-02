@@ -1,0 +1,128 @@
+
+[ 0.22 ] 2002 SEP 08
+
+Added "none" capability keyword. Some documenation updates. New pamcap_pwd_dup
+function, and pam/rsh/getpwnam bug work-around.
+
+[ 0.21 ] 2002 AUG 19
+
+Documentation added to sample-capability.conf and the capability.conf man
+page noting the addition of "cap_fs_mask" functionality.
+
+[ 0.20 ] 2002 AUG 19
+
+Documentation fix. Fixed recursive role inclusion and prefix/postfix
+cap text handling to be cleaner and more correct (only at the last possible
+moment now, in pamcap_set). Added internal definition for "cap_fs_mask"
+in case folks want to define that. NOTE: this means that I have to maintain
+the definition of this, but that shouldn't be too hard as it won't change
+much, if at all.
+
+[ 0.19 ] 2002 JUL 03
+
+Added pamcap_vers information to debugging output.
+
+[ 0.18 ] 2002 JUL 02
+
+release because I'm a dork and cvs tagged everything without updating the
+Makefile version number or this document.
+
+[ 0.17 ] 2002 JUL 02
+
+fixed appending of "cap_setpcap-eip" instead of prepending. Thanks to Jason
+Baietto for pointing this out.
+
+[ 0.16 ] 2002 JUL 02
+
+Small build patch from Dave Wilson for SuSe 7.2. New numbering scheme
+(a project this small doesn't need three version levels). Place holder
+text in HOWTO for SuSe startup script "ls -l /proc/$$/exe" read failure.
+
+[ 0.0.15 ] 2002 JUL 01
+
+Started HOWTO for collecting distribution-specific problem data and
+work-arounds, where available, and also (eventually) details about running
+services with pamcap. Added some code cleanup patches from Jens. Makefile
+change: make install doesn't install the sample-capability.conf over the
+one on your system.
+
+[ 0.0.14-pre1 ] 2002 MAY 20
+
+At the suggestion of Jens Richter we're attempting to remove the need for 
+all the "+i"'s, et cetera, from the capability.conf file and instead just
+concentrate on iheritable permissions, especially since that's of what the
+kernel patch makes use. Also prepending "all-i" instead of "all=" so that
+we shouldn't need to use "append=<blah>" in the pam.d/* config files. Also
+Jens's suggestion. Trying to solve Jen's problem of ls -l /proc/$$ doesn't
+show username but root instead!
+
+[ 0.0.13 ] 2002 APR 08
+
+Attempting some code cleanup in an effort help debug Jason Baietto's telnet
+login failure problem. Much strangeness might be afoot? Perhaps a pam
+version problem. Bug fix for users whose default group is listed not
+being recognized, only listed group members in /etc/group were recognized.
+
+[ 0.0.12 ] 2002 APR 03
+
+Added new brilliant pam_capability.8 man page from Joe Ansell via
+Jason Baietto. A few Makefile cleanups.
+
+[ 0.0.11 ] 2002 APR 02
+
+fixes for the idiot you maintains this! up the voltage!
+
+[ 0.0.10 ] 2002 APR 02
+
+better function abstraction for append= and correct 2.4.18 patch.
+
+[ 0.0.9 ] 2002 APR 02
+
+Added "append=" option. Updated README to include recommended append lines
+for various applications. Added config work and surrounding ifdef to
+patch as per recommendation and supplied patch from Jason Baietto.
+
+[ 0.0.8 ] 2002 MAR 31
+
+Default user '*' no longer required as "internal" defaults are sufficient
+for login, su, and friends success. Only specify user '*' if you want
+default permission to be non-null. Kernel patch seems to be working better.
+Root processes that don't call cap_set_proc have the capabilities cleared
+as per the normal mechanism.
+
+[ 0.0.7 ] 2002 MAR 29
+
+Documentation bug (changelog not updated). Must be a maintainer problem.
+Who hired this guy anyway?
+
+[ 0.0.6 ] 2002 MAR 29
+
+Added contributed documentation from Joe Ansell. Conf file parsing now
+verifies the existance of group names and user name for added security.
+Non-existant user and group names are ignored allowing valid declarations
+to persist.
+
+[ 0.0.5 ] 2002 MAR 29
+
+Added groups support in the capability.conf file. Revised required kernel
+modifications and collected them in "patch-rbac-X.Y.Z".
+
+[ 0.0.4 ] 2002 MAR 28
+
+Documentation updates. Changes to build process. Update to kernel mods
+required for proper functionality.
+
+[ 0.0.3 ] 2002 MAR 26
+
+At the recommendation of Aaron Kline role declarations can reference other
+role declarations. Also some minimal checking of the capability.conf for
+security.
+
+[ 0.0.2 ] 2002 MAR 22
+
+Clean up for release on freshmeat. Some documentation, some code cleanup.
+
+[ 0.0.1 ] 2002 MAR 21
+
+Initial working release.
+

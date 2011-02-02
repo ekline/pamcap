@@ -1,0 +1,9 @@
+
+HOWTO Document For pam_capability
+
+1. HOW TO cope with <distribution>-specific problems?
+
+   A. SuSe
+
+	<details of ls -l /proc/$$/exe read failure work-around from Jens>
+

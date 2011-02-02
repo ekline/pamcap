@@ -1,0 +1,128 @@
+
+<0> [ status ]
+
+Working. Beta. Testing still underway.
+
+
+<1>  [ pam_capability ]
+
+This is my attempt at building an RBAC or Role-Based Access Control system
+for Linux. If you place this in the session requirements for something like
+login, this module will set a user's inherited capabilities. By default
+the module looks for a configuration file of roles and users in
+/etc/security/capability.conf. This can be altered at runtime by setting
+the "conf=<filename>" option in the pam configuration file. Please see
+the sample configuration file in this distribution.
+
+See the prerequisites section for other legwork you or your administrator
+might have to do.
+
+
+<2>  [ prerequisites ]
+
+You must have libcap installed. If your distribution separates headers
+and you are compiling this you might need libcap-devel, libcap2-dev,
+or some obviously similar package.
+
+You will also need PAM libraries and headers.  On an Ubuntu 8.10 system
+the following packages are needed:
+
+    libcap2-dev
+    libpam0g-dev
+
+You must patch your kernel with the patch-capfix-X.Y.Z provided. It should
+apply easily, but massaging by hand should be trivial as well.
+
+It is highly recommend to read the latest Linux Capabilities FAQ at:
+ftp://ftp.guardian.no/pub/free/linux/capabilities/
+
+<3>  [ compilation and installation ]
+
+-- kernel patch --
+1.	cd <linux_src>
+2.	patch -p1 < <pam_capability_src>/patch-capfix-X.Y.Z
+3.	make [x|menu]config
+4.	turn on "Inherit Capabilities Across Exec" in the General
+	setup section. NOTE: CONFIG_EXPERIMENTAL must be enabled in
+	the top-level Code maturity menu.
+5.	recompile and reinstall kernel
+
+-- pam_capability.so build --
+1.	modify user-modifiable parts of Makefile
+2.	make
+3.	[sudo] make install
+
+	OR
+
+3.	[sudo] make install-pam
+	[sudo] make install-conf
+	[sudo] make install-man
+	[sudo] make install-doc
+
+4.	edit /etc/security/capability.conf to your taste.
+5.	add pam session entries for desired applications (see below)
+
+
+<3>  [ how to use pam_capability ]
+
+To use this module it is recommended that you add the following to an
+/etc/pam.d service file:
+
+session    required     /lib/security/pam_capability.so <options>
+
+This is best added to the "login" and "su" services and any other services
+that provide "login"-like services of their own where you might want
+capabilities set (e.g., sshd).
+
+Supported options are:
+	o "debug"
+	   log a few things to syslog
+	o "conf=<conffile>"
+	   specify the location of the configuration file
+
+
+<4>  [ todo ]
+
+- minimize security risk of (over-)setting capabilities
+- scour kernel for places where capable() MACRO should be called but isn't
+- document ways to get around have root filesystem permissions to do
+  anything useful (big drawback of /proc/sys interface)
+- experiment with various role definitions and daemons to create a
+  howto on running them without root but with pam_capability roles
+
+
+<5>  [ license information ]
+
+basically: GPLv2
+
+/*___________________________________________________________________________
+
+[ pam_capability ] the capabilities pam module
+
+Copyright (C) 2002 Erik M. A. Kline
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+
+Please see the file "GPL" in the "meta" subdirectory of the top level source
+directory, if you have received this program with source code.
+
+For further information or concerns please contact:
+
+    Erik Kline
+    ekline@ekline.com, or
+    erik@alum.mit.edu
+  ___________________________________________________________________________
+*/
+
